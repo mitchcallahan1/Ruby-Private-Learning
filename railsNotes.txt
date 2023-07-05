@@ -1,0 +1,77 @@
+Model view Controller Pattern
+- its a seperation of presentation layer from the business-logic or backend.
+
+Model
+- User
+_ post 
+_ Article
+_ Stock
+
+view
+- homepage.html.erb
+- new.html.erb
+- friends.html.erb
+- my_portfolio.html.erb
+
+Controller
+- users_controller
+- posts_controller
+- articles_controller
+
+MVC - Model, View, Controller
+-------------------------------
+
+General flow of Rails application:
+
+-> Request made at browser
+
+-> Request received at router of rails application
+
+-> Request routed to appropriate action in a controller
+
+-> Controller#action either renders a view template or communicates with model
+
+-> Model communicates with database
+
+-> Model sends back information to controller
+
+-> Controller renders view
+
+Convental expectations
+------------------------
+-> Define a route that points to a controller#action
+-> Have an appropiately named controller and action
+
+
+LAYOUT
+______
+
+APP
+-> assets has style sheets and images to be displayed on web application
+-> application.css is just there to make sure all scss files can be used globally.
+
+-> channels folder is used to work with real time communications with our appliccations like 
+live chat appliccations
+
+-> controller folder will have controllers that perform various functions
+
+-> the model folder will have all of our model files that are like database connections for the application
+
+
+-> Views folder has all of html.erb files that render the app
+
+CONFIG
+-> environemnt folder defines all the different environments we will will be working in
+-> defines ddifferent configurations for various environment we will be working on-> most important file in configurationsfile is rotes.rb because it will be used when starting server
+
+DB 
+-> migration files will go in db folder
+-> schema files will list out all table links and relationships between data tables
+
+GEMFILE
+-> most gems in here come by defualt but can always add more
+-> run bundle install after adding gems
+-> after running bundle, gemfile.lock will Appear 
+
+package.json
+
