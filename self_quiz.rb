@@ -7,7 +7,7 @@
 #    ***
 #     *
 
-rows = 10
+rows = 7
 num_stars = 1
 count = 1
 spaces = rows/2
