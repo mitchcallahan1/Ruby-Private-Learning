@@ -1,0 +1,52 @@
+BOOTSTRAP NOTES
+---------------
+FIRST: INSTALL IN RAILS PROJECT
+-> first instead of just using CDN's and sourcing the js and css libraries only online,
+uinstall them locally in your rails project using command:
+
+$ npm install bootstrap@5.0.2 jquery popper.js
+
+or install yarn and do:
+
+$ yarn add bootstrap@5.0.2 jquery popper.js
+
+once done
+-> go to package.json and see that popper and JQuery were downloaded as dependancies 
+
+SECOND: 
+
+-> IMPORT YOUR BOOT STRAP CODE YOU LIKE INTO <page>.html.erb or if you want 
+on every page then paste in application.html.erb
+-> it wont load at first so then complete third step
+
+THIRD:
+
+go into app/assets/stylesheets/application.scss and paste 
+
+= require bootstrap above tree and self like as such
+
+ *= require_tree .
+ *= require_self
+ *= require bootstrap
+
+FOURTH:
+
+-> Make the config/webpack/environment.js file look like below (you are adding the lines which are highlighted in green below):
+const { environment } = require('@rails/webpacker')
+const webpack = require("webpack")
+environment.plugins.append("Provide", new webpack.ProvidePlugin({
+$: 'jquery',
+jQuery: 'jquery',
+Popper: ['popper.js', 'default']
+}))
+module.exports = environment
+
+FIFTH:
+
+-> add line:
+
+import "bootstrap"
+
+into application.js under javascript/packs/
+
+DONE: LOAD YOUR PAGE AND TRY INTERACTIVITY (dropdowns)

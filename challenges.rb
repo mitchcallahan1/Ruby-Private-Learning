@@ -1,4 +1,4 @@
-# just playing around with different loops
+# just playing around with different loops to get used to ruby syntax
 
 # "Write a program that prints the numbers from 1 to 100. But for multiples of 
 # three print Fizz instead of the number and for the multiples of five print Buzz. 
