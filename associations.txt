@@ -1,0 +1,184 @@
+// all info from https://guides.rubyonrails.org/association_basics.html
+
+In Rails, an association is a connection between two Active 
+Record models. Why do we need associations between models? 
+Because they make common operations simpler and easier in your code. 
+For example, consider a simple Rails application that includes a model
+for authors and a model for books. Each author can have many books. 
+Without associations, the model declarations would look like this:
+
+class Author < ApplicationRecord
+end
+
+class Book < ApplicationRecord
+end
+
+Now, suppose we wanted to add a new book for an existing author. 
+We'd need to do something like this:
+
+@book = Book.create(published_at: Time.now, author_id: @author.id)
+
+Or consider deleting an author, and ensuring that 
+all of its books get deleted as well:
+
+@books = Book.where(author_id: @author.id)
+@books.each do |book|
+  book.destroy
+end
+@author.destroy
+
+With Active Record associations, we can streamline these - and
+other - operations by declaratively telling Rails that there is a 
+connection between the two models. 
+Here's the revised code for setting up authors and books:
+
+class Author < ApplicationRecord
+  has_many :books, dependent: :destroy
+end
+
+class Book < ApplicationRecord
+  belongs_to :author
+end
+
+With this change, creating a new book for a particular author is easier:
+
+@book = @author.books.create(published_at: Time.now)
+
+Deleting an author and all of its books is much easier:
+
+@author.destroy
+
+----------------------------
+
+by declaring that one model belongs_to another, you instruct Rails to maintain Primary Key-Foreign Key information between instances of the two models, and you also get a number of utility methods added to your model.
+
+----------------------------
+
+The belongs_to association 
+-> sets up a connection with another model, such that each instance of the declaring model belongs to one instance
+of another model
+
+-> for example: 
+class Book < ApplicationRecord
+  belongs_to :author
+end
+
+the corresponding migration in migration.rb might be like this:
+
+class CreateBooks < ActiveRecord::Migration[7.0]
+  def change
+    create_table :authors do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :books do |t|
+      t.belongs_to :author
+      t.datetime :published_at
+      t.timestamps
+    end
+  end
+end
+
+-> belongs_to does not ensure reference consistency, so depending on the use case, you might also need to add a database-level foreign key constraint on the reference column, like this:
+
+create_table :books do |t|
+  t.belongs_to :author, foreign_key: true
+  # ...
+end
+
+----------------------
+
+the has_one association 
+
+-> For example, if each supplier in your application has only one account, you'd declare the supplier model like this:
+
+class Supplier < ApplicationRecord
+  has_one :account
+end
+
+- The main difference from belongs_to is that the link column supplier_id is located in the other table:
+
+The corresponding migration might look like this:
+
+class CreateSuppliers < ActiveRecord::Migration[7.0]
+  def change
+    create_table :suppliers do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :accounts do |t|
+      t.belongs_to :supplier
+      t.string :account_number
+      t.timestamps
+    end
+  end
+end
+
+---------------
+
+the has_many association
+
+-> A has_many association is similar to has_one, but indicates a one-to-many connection with another model. You'll often find this association on the "other side" of a belongs_to association. This association indicates that each instance of the model has zero or more instances of another model. For example, in an application containing authors and books, the author model could be declared like this:
+
+class Author < ApplicationRecord
+  has_many :books
+end
+
+-> Note: The name of the other model is pluralized when declaring a has_many association.
+
+The corresponding migration might look like this:
+
+class CreateAuthors < ActiveRecord::Migration[7.0]
+  def change
+    create_table :authors do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :books do |t|
+      t.belongs_to :author
+      t.datetime :published_at
+      t.timestamps
+    end
+  end
+end
+Copy
+Depending on the use case, it's usually a good idea to create a non-unique index and optionally a foreign key constraint on the author column for the books table:
+
+create_table :books do |t|
+  t.belongs_to :author, index: true, foreign_key: true
+  # ...
+end
+
+------------------------------
+
+in my test_app with associations i can use commands like
+(assuming no user created yet so this user will be id:1)
+
+user1 = User.create(username: "mith123")
+
+post = user1.posts.build(title:"user test", content: "helllllloooo")
+
+and then post.save
+
+now user1.posts will return:
+
+#<Post:0x00007fb9011daa80
+  id: 27,
+  title: "post id",
+  content: "yoahahahahhahahaha",
+  created_at: Mon, 10 Jul 2023 02:25:00.567191000 UTC +00:00,
+  updated_at: Mon, 10 Jul 2023 02:25:00.567191000 UTC +00:00,
+  user_id: 1>,
+
+---------------
+
+to add a user id to an exisiing record with no userid 
+use the shovel operator <<
+
+eg -> say article is an existing article object with no userid
+user_2.articles << article
+
+now user 2 will have this particular article in its list and matching user id
